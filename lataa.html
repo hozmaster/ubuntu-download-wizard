@@ -1,0 +1,803 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="robots" content="index,follow">
+
+<title>Lataa - Ubuntu Suomi</title>
+
+<script src="jquery.js" type="text/javascript"></script>
+<script src="custom.js" type="text/javascript"></script>
+<script src="ObjTree.js" type="text/javascript"></script>
+
+
+<link rel="stylesheet" type="text/css" media="screen" href="http://www.ubuntu-fi.org/css/menu_1024.css" title="menu1024">
+
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://www.ubuntu-fi.org/css/common.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="screen" href="http://www.ubuntu-fi.org/css/screen.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="print" href="http://www.ubuntu-fi.org/css/print.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="projection" href="http://www.ubuntu-fi.org/css/projection.css">
+<style type="text/css"> 
+select {
+border: 1px solid black;
+
+}
+
+option {
+	font-weight: bold;
+	border-bottom: 1px solid #C0C0C0;
+	padding: 5px;
+	padding-left: 25px;
+}
+
+#select_1, #select_2, #select_3, #select_4, #select_5, #infobox {
+position: relative;
+height: 8em;
+}
+#select_3 {
+height: 10em;
+}
+#select_5 li{
+padding-left: 17px;
+
+}
+
+#select_1 ul, #select_2 ul, .inner, .outer, #select_4 ul, #select_5 ul{
+	margin: 0px;
+	padding: 2px;
+	padding-top: 5px;
+	list-style:none;
+}
+
+#select_2 ul li {
+margin-left: 33px;
+}
+
+#select_4 ul {
+margin-left: 0px;
+}
+
+#select_5 ul {
+margin-left: 25px;
+}
+
+
+.outer {
+float: left;
+}
+
+.outer .title {
+padding-left: 30px;
+font-weight: bold;
+}
+.inner li {
+	float:left !important;
+	position: relative !important;
+	width: 8em;
+	padding: 5px;
+	margin: 2px;
+	cursor: pointer;
+	text-align: center;
+padding-bottom: 2em;
+}
+
+.inner li img {
+height: 30px;
+}
+
+.inner li:hover img {
+height: 40px;
+}
+
+#select_1 li {
+	float:left !important;
+	position: relative !important;
+	width: 12em;
+	padding: 5px;
+	margin: 2px;
+	text-align: center;
+}
+
+#select_2 li {
+	float:left;
+	position: relative;
+	width: 5em;
+	padding: 5px;
+	margin: 2px;
+	cursor: pointer;
+	text-align: center;
+}
+
+#select_4 li {
+	float:left;
+	position: relative;
+	width: 8em;
+	padding: 5px;
+	margin: 2px;
+	cursor: pointer;
+	text-align: center;
+}
+ 
+#select_5 li {
+	float:left;
+	position: relative;
+	width: 12em;
+	padding: 5px;
+	margin: 2px;
+	cursor: pointer;
+	text-align: left;
+}
+
+#select_1 li:hover, #select_2 li:hover, #select_3 li:hover {
+font-weight: bold !important;
+} 
+
+#select_2 li img{
+width: 48px;
+height: 48px;
+} 
+#select_2 li:hover img{
+width: 64px !important;
+height: 64px !important;
+} 
+
+#select_4 li img {
+height: 25px;
+}
+
+#select_4 li:hover img,#select_5 li:hover img {
+height: 35px !important;
+}
+
+#select_4 li:hover, #select_4 li:hover{
+font-weight: bold;
+}
+
+#inner li:hover img {
+height: 35px !important;
+}
+#select_3 li.title {
+	padding-left: 2em;
+	font-weight: bold;
+}
+
+#select_3 li.title:hover {
+	cursor: default;
+}
+
+.otsikot {
+	font-size: medium;
+	background-color: #AC854A;
+}
+
+
+li.info{
+    position:relative; 
+	color: black;
+	z-index: 24;
+	}
+	
+
+li.info2{
+    position:relative; 
+	color: black;
+     z-index:22;  
+	}
+li.info span, li.info2 span{
+	display: none
+	}
+
+li.info:hover span, li.info2:hover span{ /*the span will display just on :hover state*/
+	display:block;
+    position:absolute;
+    top:5em; left:100px; width:150px;
+    border:1px solid black;
+    background-color:#fff;
+    color:#000;
+    text-align: left;
+	padding: 2px;
+	}
+	
+li.info span:hover {
+display: none;	
+}
+
+li.info:hover {
+z-index: 25;	
+
+}
+
+li.info2:hover {
+z-index: 23;
+background: #FFDD83;
+	
+}
+
+#dvdspan {
+color: #000;	
+}
+</style>
+<script type="text/javascript">
+var tree;
+var tree2;
+var dist;
+
+jQuery(document).ready(function() {
+// get ajaxed ubuntuchoser, when javascript is enabled
+/*$.get('chooser_uusi.html', function(data) {
+//data = "<br>test test test";
+  $('#valinnat').html(data).delay(100); 
+}); */
+$.ajax({ url: "chooser_uusi.html", async: false, success: startajax });
+
+// get xml database, and trigger startScript
+$.ajax({ url: "ubuntu_chooser_1410.xml", async: false, success: startScript });
+$.ajax({ url: "chooser_md5.txt", async: false, success: initMD5 });
+});
+
+// Global variables for download selection
+var step1=step2=step3=step4=step5="";
+var md5 = Array();
+var tree_test;
+var downloadColor = 0		//For blinkin download text
+var colors=new Array("#e3e3e3","#e4e0d6","#e4ddc9","#e5d9bb","#e6d6ae","#e6d3a1","#e7d094","#e8cd86","#e9ca79","#e9c66c","#eac35f","#ebc051","#ebbd44","#ecba37","#edb62a","#edb31c");
+
+function downloadUrl() {
+  temp = tree_test;
+  errormsg = temp.Ubuntu.metadata.error.title;
+  var error = 0;
+  for (i=1;i<=5;i++) {
+    eval("test = step"+i+";");
+    if ( test == '') error++;
+  }
+  if (error > 0) { alert(errormsg); } else {
+    eval("redirect = temp.Ubuntu." + step1 + "." + step2 + ".download." + step3 + "." + step4 +  "." + step5 +";");
+    location.replace(redirect);
+  }
+}
+
+function startajax(data, textStatus, XMLHttpRequest) {
+	xotree2 = new XML.ObjTree();
+	text2 = XMLHttpRequest.responseText;
+	// trigger generate_step1 after 3 sek preload - to be sure everything is loaded
+	//setTimeout("$('#valinnat').html(text2);",50);
+	setTimeout('document.getElementById("valinnat").innerHTML = text2;',50);
+}
+
+function startScript(data, textStatus, XMLHttpRequest) {
+	xotree2 = new XML.ObjTree();
+	text = XMLHttpRequest.responseText;
+	temp = xotree2.parseXML( text ); 
+	tree_test = temp;
+	// trigger generate_step1 after 3 sek preload - to be sure everything is loaded
+	setTimeout("generate_step1();",500);
+}
+
+function initMD5(data, textStatus, XMLHttpRequest) {
+	MD5data = XMLHttpRequest.responseText;
+	var md5temp = MD5data.split("\n");
+	for (var a in md5temp) {
+	temp = md5temp[a].split("\t");
+	md5[temp[1]] = temp[0];
+	}
+}
+
+function select1(currValue,selection) {
+	
+select1_li=$('#select_1 li');
+	for (var i=1; i <= select1_li.length; i++){
+		$('#step1_'+i).css("font-weight","normal");
+	}
+step1=selection;
+step2= "";
+step3= "";
+step4= "";
+step5= "";
+$('#step1_'+currValue).css("font-weight","bold");
+updateDistros(selection);
+$('#select_3').fadeOut(400, function() {
+    $('#select_3').html('').show();
+  });
+$('#select_4').fadeOut(400, function() {
+    $('#select_4').html('').show();
+  });
+$('#select_5').fadeOut(400, function() {
+    $('#select_5').html('').show();
+  });
+   	$('#infobox').fadeOut(800, function() {
+    $('#infobox').fadeIn(400).html('');
+  });
+}
+
+function select2(currValue,selection) {
+select2_li=$('#select_2 li');
+for (i=1; i <= select2_li.length; i++){
+$('#step2_'+i+" img").css("width","48px");
+$('#step2_'+i+" img").css("height","48px");
+$('#step2_'+i).css("font-weight","normal");
+}
+
+//select2_element = $('step2_'+currValue);
+step2=selection;
+step3= "";
+step4= "";
+step5= "";
+id = "#step2_"+currValue;
+$('#step2_'+currValue+" img").css("width","64px");
+$('#step2_'+currValue+" img").css("height","64px");
+$('#step2_'+currValue).css("font-weight","bold");
+//checkAll();
+updateVersions(selection);
+$('#select_4').fadeOut(400, function() {
+    $('#select_4').html('').show();
+  });
+$('#select_5').fadeOut(400, function() {
+    $('#select_5').html('').show();
+  });
+   	$('#infobox').fadeOut(800, function() {
+    $('#infobox').fadeIn(400).html('');
+  });
+}
+
+
+function select3(currValue,selection) {
+
+select1_li=$('#select_3 li');
+	for (var i=1; i <= select1_li.length; i++){
+		$('#step3_'+i+' img').css("height","30px");
+		$('#step3_'+i).css("font-weight","normal");
+	}
+step3=selection;
+step4= "";
+step5= "";
+//$('#step3_'+currValue).css("background","#EEB00F");
+$('#step3_'+currValue+' img').css("height","40px");
+$('#step3_'+currValue).css("font-weight","bold");
+updateOptions(selection);
+  $('#select_5').fadeOut(400, function() {
+    $('#select_5').html('').show();
+  });
+   	$('#infobox').fadeOut(800, function() {
+    $('#infobox').fadeIn(400).html('');
+  });
+}
+
+function select4(currValue,selection) {
+	select1_li=$('#select_4 li');
+		for (var i=1; i <= select1_li.length; i++){
+		$('#step4_'+i+" img").css("height","25px");
+		$('#step4_'+i).css("font-weight","normal");
+		}
+	step4= selection;
+	step5= "";
+	$('#step4_'+currValue+" img").css("height","40px");
+	$('#step4_'+currValue).css("font-weight","bold");
+	
+	$('#infobox').fadeOut(800, function() {
+    $('#infobox').fadeIn(400).html('');
+  });
+	updateDownload(selection);
+}
+
+function select5(currValue,selection) {
+select1_li=$('#select_5 li');
+	for (var i=1; i <= select1_li.length; i++){
+	$('#step5_'+i+" img").css("height","25px");
+	$('#step5_'+i).css("font-weight","normal");
+	}
+step5= selection;
+$('#step5_'+currValue+" img").css("height","35px");
+$('#step5_'+currValue).css("font-weight","bold");
+	updateLinks();
+}
+
+function generate_step1() {
+	temp = tree_test;
+	comps = temp.Ubuntu;
+	var text = "<ul>";
+	var i = 1;
+	for(var a in comps){
+	if (a != "metadata" ){
+	eval("title = temp.Ubuntu.metadata."+a+".title;");
+	eval("src = temp.Ubuntu.metadata."+a+".icon;");
+	eval("desc = temp.Ubuntu.metadata."+a+".description;");
+	imagetag ='<img src="logos/'+src+ '" /><br>';
+	
+	text = text + '<li class="info" id=\"step1_'+i+'\" onClick=\"select1(\''+ i +'\',\''+a+'\');">'+imagetag+'<br>'+title+'<span>'+desc+'<\/span><\/li>';
+	i++;
+	}
+	}
+	
+	$('#select_1').fadeOut(800, function() {
+    $('#select_1').fadeIn(400).html(text+"<\/ul>");
+  });
+  
+	$('#select_2').fadeOut(800, function() {
+    $('#select_2').fadeIn(400).html('');
+  });
+  
+	$('#select_3').fadeOut(800, function() {
+    $('#select_3').fadeIn(400).html('');
+  });
+  
+  	$('#select_4').fadeOut(800, function() {
+    $('#select_4').fadeIn(400).html('');
+  });
+  
+  	$('#select_5').fadeOut(800, function() {
+    $('#select_5').fadeIn(400).html('');
+  });
+   	
+}
+	
+function updateDistros(id) {
+	
+	temp = tree_test;
+	eval("distros = temp.Ubuntu." + id + ";");
+	var text = "<ul>";
+	var i = 1;
+	for(var data in distros){
+	src = distros[data].icon;
+	imagetag="<img src=\"logos/"+src+"\" align=\"absmiddle\" alt=\"\">";  // imagetag
+	desc = distros[data].description;
+	title =	distros[data].title;
+	text = text + '<li class="info" id=\"step2_'+i+'\" onClick=\"select2(\''+ i +'\',\''+data+'\');">'+imagetag+'<br>'+title+'<span>'+desc+'<\/span><\/li>';
+	i++;
+	}
+	$('#select_2').fadeOut('slow', function() {
+    $('#select_2').fadeIn("slow").html(text+"<\/ul>");
+  });
+  
+} 
+
+function updateVersions(id) {
+	temp = tree_test;
+	eval("versions = temp.Ubuntu." + step1 +"."+ step2 +".download");
+	//print_r(versions);
+	var text = "";
+	var imagetag = "";
+	var i = 1;
+	for(var a in versions){
+	var imagetag = "";
+		// text = text + '<ul id="outer">';
+		eval("title = temp.Ubuntu.metadata."+a+".title;");
+
+		// text = text + '<li class="title">'+imagetag+title+'<\/li>';
+		text = text +'<div class="outer">' +  imagetag + '<span class="title">'+ title + '<\/span>';
+
+		// text = text + '<\/ul><ul class="inner">';
+		text = text + '<ul class="inner">';
+	   for(var b in versions[a]){
+			if (b != "title")  {
+			eval("src = temp.Ubuntu.metadata."+b+".icon;");
+			imagetag ='<img src="logos/'+src+ '" /><br>';
+			eval("title = temp.Ubuntu.metadata."+b+".title;");
+			eval("desc = temp.Ubuntu.metadata."+b+".description;");
+			text = text + '<li class="info" id=\"step3_'+i+'\" onClick=\"select3(\''+ i +'\',\''+a+'.'+b+'\');">'+imagetag+title+'<span>'+desc+'<\/span<\/li>';
+			i++;
+			}
+	 	}
+	 text = text + '<\/ul><\/div>';
+	}
+	$('#select_3').fadeOut('slow', function() {
+    $('#select_3').fadeIn("slow").html(text+"<\/ul>");
+  
+  });
+    
+} 
+
+function updateOptions(id) {
+	temp = tree_test;
+	eval("opts = temp.Ubuntu." + step1 +"."+ step2 +".download."+id+";");
+	//print_r(versions);
+	var text = "<ul>";
+	var imagetag = "";
+	var i = 1;
+	for(var a in opts){
+	eval("title = temp.Ubuntu.metadata."+a+".title;");
+	eval("src = temp.Ubuntu.metadata."+a+".icon;");
+	eval("desc = temp.Ubuntu.metadata."+a+".description;");
+	imagetag ='<img src="logos/'+src+ '" /><br>';
+	text = text + '<li class="info" id=\"step4_'+i+'\" onClick=\"select4(\''+ i +'\',\''+a+'\');">'+imagetag+title+'<span>'+desc+'<\/span><\/li>';
+	i++;
+	}
+	$('#select_4').fadeOut('slow', function() {
+    $('#select_4').fadeIn("slow").html(text+"<\/ul>"); 
+  });
+    
+} 
+
+function updateDownload(id) {
+	temp = tree_test;
+	eval("dlopts = temp.Ubuntu." + step1 +"."+ step2 +".download."+step3+"."+id+";");
+	var text = "<ul>";
+	var imagetag = "";
+	var i = 1;
+	for(var a in dlopts){
+	eval("title = temp.Ubuntu.metadata."+a+".title;");
+	eval("src = temp.Ubuntu.metadata."+a+".icon;");
+	eval("desc = temp.Ubuntu.metadata."+a+".description;");
+	imagetag ='<img src="logos/'+src+ '" /><br>';
+	text = text + '<li class="info" id=\"step5_'+i+'\" onClick=\"select5(\''+ i +'\',\''+a+'\');">'+imagetag+title+'<span>'+desc+'<\/span><\/li>';
+	i++;
+	}
+	$('#select_5').fadeOut('slow', function() {
+    $('#select_5').fadeIn("slow").html(text+"<\/ul>"); 
+  });
+    
+}  // end of function
+
+function updateLinks() {
+eval("dlLink = temp.Ubuntu." + step1 + "." + step2 + ".download." + step3 + "." + step4 +  "." + step5 +";");  // get the download url
+var isoimage = Array();
+isoimage = dlLink.split("/");   // split url for slash
+
+for (var a in isoimage) {
+var target = isoimage[a];    // get last entry == the filename
+}
+md5text = md5[target];      // md5 contains array with key for filename and value for md5 sum, get the sum.
+
+if (md5text == undefined ) { md5text = "ei saatavilla"; }
+
+var info = '<p>Latauslinkki:<br><a href="'+dlLink+'">'+dlLink+'<\/a><br><br>Md5-summa:<br>'+md5text+'<\/p>';  // generate html output 
+
+$('#infobox').fadeOut('slow', function() {  // show the results
+$('#infobox').fadeIn("slow").html(info); 
+});
+
+}
+
+</script>
+</head>
+<body dir="ltr" lang="en">
+
+<div id="isoframe">
+
+<!-- nav.html -->
+<div id="sisaframe">
+  <a href="http://www.ubuntu-fi.org/"><img src="http://www.ubuntu-fi.org/images/etusivu/1004/suomi-logo.png" alt="Ubuntu Suomi" id="suomi-logo"></a>
+  <a href="#tekstinalku"><img src="http://www.ubuntu-fi.org/images/spacer.gif" alt="Suoraan sisältöön" width="1" height="1"></a>
+  <div id="Layer2">
+<!-- Google CSE Search Box Begins -->
+  <form id="searchbox_011221610743224203811:qxdhwbdrkrm" title="Haku useista suomenkielisistä Ubuntu/Linux-tietolähteistä" action="http://www.ubuntu-fi.org/etsi.html">
+<div>
+    <input type="hidden" name="cx" value="011221610743224203811:qxdhwbdrkrm">
+    <input type="hidden" name="cof" value="FORID:11">
+    <input name="q" type="text" size="20">
+    <input type="submit" name="sa" value="Hae" id="hae" >
+<!--    <img src="http://google.com/coop/images/google_custom_search_smnar.gif" alt="Google Custom Search" /> -->
+</div>
+  </form>
+<!-- Google CSE Search Box Ends -->
+</div>
+</div>
+
+<div id="nav" style="position: relative; z-index: 3;">
+<ul id="navlist">
+   
+  <li style="width: 9em;" class="naviotsikko">Esittely <small class="navinuoli">►</small>
+	  <ul>
+	  <li><a href="http://wiki.ubuntu-fi.org/Esittely">Mikä on Ubuntu?</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Kuvia_ja_videoita">Kuvia ja videoita</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Linux_k%C3%A4ytt%C3%A4j%C3%A4ksi">Miksi käyttäisin Linuxia</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Vertailutaulukko_k%C3%A4ytt%C3%B6j%C3%A4rjestelm%C3%A4t">Vertailutaulukko</a></li>
+          <li><a href="http://www.ubuntu-fi.org/kubuntu/">Kubuntu <span style="font-size: x-small;">(KDE-työpöytä)</span></a></li>
+	  <li class="alin"><a href="http://wiki.ubuntu-fi.org/Edubuntu">Edubuntu <span style="font-size: x-small;">(opetuskäyttö)</span></a></li>
+	  </ul>
+  </li>
+  
+  <li style="width: 11em;" class="naviotsikko">Hanki Ubuntu <small class="navinuoli">►</small>
+    <ul>
+	<li><a href="http://www.ubuntu-fi.org/lataa.html">Lataa Ubuntu </a></li>
+	<li><a href="http://wiki.ubuntu-fi.org/Tilaa_Ubuntu_CD">Tilaa Ubuntu CD/DVD</a></li>
+	<li class="alin"><a href="http://wiki.ubuntu-fi.org/Lainaa_Ubuntu">Lainaa Ubuntu kirjastosta</a></li>
+	</ul>
+  </li>
+  
+  <li style="width: 12em;" class="naviotsikko">Ohjeet ja tuki <small class="navinuoli">►</small>
+	  <ul>
+	  <li><a href="http://wiki.ubuntu-fi.org/Ohjeet">Ohjeiden pääsivu</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Asentaminen">Ubuntun asentaminen</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Paivittaminen">Ubuntun päivittäminen</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/UKK">Usein kysytyt kysymykset</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Ubuntu_tutuksi">Ubuntu tutuksi -kirja</a></li>
+	  <li class="alin"><a href="http://wiki.ubuntu-fi.org/">Ubuntu Suomen wiki</a></li>
+	  </ul>
+  </li>
+  
+  <li style="width: 15em;" class="naviotsikko">Kaupalliset palvelut <small class="navinuoli">►</small>
+	  <ul>
+	  <li><a href="http://wiki.ubuntu-fi.org/Ubuntu-liiketoiminta">Ubuntu-liiketoiminta</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Tukipalvelut">Tuki- ja asennuspalvelut</a></li>
+	  <li><a href="http://wiki.ubuntu-fi.org/Tietokoneet_ja_laitteet">Tietokoneet ja laitteet</a></li>
+	  <li class="alin"><a href="http://wiki.ubuntu-fi.org/Ubuntu-tuotteet">Ubuntu-tuotteet</a></li>
+	  </ul>
+  </li>
+  
+   <li class="naviotsikko">Ubuntu-yhteisö <small class="navinuoli">►</small>
+    <ul>
+    <li><a href="http://wiki.ubuntu-fi.org/Yhteiso">Yhteisön esittely</a></li>
+    <li><a href="http://wiki.ubuntu-fi.org/Toiminta">Toiminta</a></li>
+    <li><a href="http://wiki.ubuntu-fi.org/Tapahtumat">Tapahtumat</a></li>
+    <li><a href="http://wiki.ubuntu-fi.org/Postituslistat_ja_IRC">Postituslistat ja IRC</a></li>
+    <li><a href="http://blog.ubuntu-fi.org/">Blogikirjoitukset</a></li>
+    <li class="alin"><a href="http://forum.ubuntu-fi.org/">Keskustelualueet</a></li>
+    </ul>
+  </li>
+  
+</ul>
+<a name="tekstinalku" id="tekstinalku"></a>
+</div>
+<!-- nav.html ends -->
+</div>
+
+<div id="page" dir="ltr" lang="fi">
+	<div id="asettelu">  
+	
+			<table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+				<tr>
+					<td align="center"><h1>Lataa Ubuntu 14.04 LTS</h1>
+						<p><a href="http://wiki.ubuntu-fi.org/Ubuntu_14.04_LTS">Ubuntu 14.04 LTS</a> sopii kaikille yleisimmille tietokoneille ja on Ubuntu-tuoteperheen suositeltavin valinta.<br>
+<!-- Tuorein päivitysversio 12.04.4 LTS julkaistiin 6.2.2014. Se sisältää laitetuen uusimmillekin tietokoneille sekä kaikki jo julkaistut päivitykset. --></p></td>
+				</tr>
+			</table>
+			<br>
+			<table width="456" border="0" style="margin: 0 auto;">
+    <tbody>
+    	<tr>
+    		<td align="center" valign="middle"><span style="font-size: medium;"><img src="images/lataa/1004/1.png" alt="1" height="29" width="22"></span></td>
+    		</tr>
+    	<tr>
+      <td align="center" valign="middle"><span style="font-size: medium;"><a href="http://fi.releases.ubuntu.com/14.04.1/ubuntu-14.04.1-desktop-amd64.iso">Lataa Ubuntu-asennusmedia</a></span>
+      <br><span style="font-size:x-small;">Haluatko koko suomen kielen tuen valmiiksi asennusmedialla? <br>Lataa <a href="http://wiki.ubuntu-fi.org/Ubuntu_Finnish_Remix">Ubuntu 14.04 LTS (Finnish Remix)</a>.
+      <br>Onko tietokoneesi valmistettu ennen 2007? <a href="http://wiki.ubuntu-fi.org/PAE">Valitse oikea Ubuntu-versio</a>.</span>
+    </td> 
+    </tr>
+    <tr>
+    	<td valign="middle">&nbsp;</td>
+    	</tr>
+    <tr>
+    	<td align="center" valign="middle"><span style="font-size: medium;"><img src="images/lataa/1004/2.png" alt="2" height="32" width="22"></span></td>
+    	</tr>
+    <tr>
+    	<td align="center" valign="middle"><span style="font-size: medium;">Kirjoita lataamasi tiedosto<br>
+            <a href="http://wiki.ubuntu-fi.org/Ubuntu_USB-tikulle">USB-tikulle</a>
+          	<br>tai<br>
+            <a href="http://wiki.ubuntu-fi.org/Levykuva">DVD-levylle</a>
+          </span></td>
+    	</tr>
+    <tr>
+    	<td valign="bottom">&nbsp;</td>
+    	</tr>
+    <tr>
+    	<td align="center" valign="bottom"><img src="images/lataa/1004/3.png" alt="3" height="32" width="22"></td>
+    	</tr>
+    <tr>
+    	<td align="center" valign="middle"><span style="font-size: medium;"><strong><a href="http://wiki.ubuntu-fi.org/Asentaminen">Asenna</a></strong></span></td>
+    	</tr>
+    <tr>
+    	<td align="center" valign="bottom">&nbsp;</td>
+    	</tr>
+  </tbody></table>
+  		  	<table border="0" cellspacing="0" cellpadding="0" style="margin: 0 auto;">
+				<tr>
+					<td align="center"><p style="font-size:medium;">Voit myös <a href="http://wiki.ubuntu-fi.org/Ubuntu-tuotteet">tilata Ubuntu-DVD:n</a>, <a href="http://wiki.ubuntu-fi.org/Lainaa_Ubuntu">lainata Ubuntu-DVD:n kirjastosta</a> tai <a href="http://wiki.ubuntu-fi.org/Tietokoneet_ja_laitteet">ostaa Ubuntu-tietokoneen</a>.</p>
+						<p style="font-size:medium;">&nbsp;</p>
+						<p style="font-size:medium;">&nbsp;</p>
+						<p style="padding: 0px 0px 5px;">Katso myös <a href="http://wiki.ubuntu-fi.org/Laitteistovaatimukset">laitteistovaatimukset</a>, teknisiä huomautuksia sisältävä <a href="https://wiki.ubuntu.com/TrustyTahr/ReleaseNotes">julkaisumuistio</a> <br>
+					sekä <a href="http://wiki.ubuntu-fi.org/Ubuntu_14.04_LTS">Ubuntu 14.04 LTS -esittelysivu</a>.</p></td>
+				</tr>
+			</table>
+	  	  <p style="font-size:medium;">&nbsp;</p>
+  <a name="tarkemmin"><h2>TAI VALITSE UBUNTU-KOKEMUKSESI TARKEMMIN...</h2></a>
+<p>Tietoja Ubuntun sisarjulkaisuista sivulla <a href="http://wiki.ubuntu-fi.org/Kuvia_ja_videoita">Kuvia ja videoita</a>. Saatat olla esimerkiksi kiinnostunut Ubuntun erityisversioista opetus- (Edubuntu), studio- (Ubuntu Studio) tai palvelinkäyttöön (Ubuntu Server). Kevyt Lubuntu soveltuu jopa vuoden 1995 tietokoneille, tarjoten kuitenkin turvalliset ja ajantasaiset ohjelmistot.</p>
+
+<p>Kaikkien julkaisujen suhteen on suositeltavinta käyttää pitkäaikaisesti tuettua LTS-versiota. Päivitetyt LTS-asennusmediat, kuten 14.04.1, sisältävät nykyään tuoreen laitetuen uusimmillekin tietokoneille. Ubuntu 14.04 LTS:ään voit <a href="http://wiki.ubuntu-fi.org/Paivittaminen">päivittää</a> aiemmista Ubuntu-versioista.</p>
+
+<i><b>Ubuntu 14.10 julkaistu 23.10.2014</b></i>
+
+<p>Vaihtoehtona LTS:lle on tuorein Ubuntu 14.10, joka versionumeronsa mukaisesti julkaistiin lokakuussa 2014. Puolivuosittain julkaistavat julkaisut sopivat uutuuksista kiinnostuneille, mutta Ubuntua pitää myös päivittää aina seuraavaan julkaisuun viimeistään yhdeksän kuukauden kuluttua. <!--Muutoksia Ubuntu 13.10:ssä:</p>
+<ul>
+<li>Unity 7 -työpöytäkokemus sisältää paljon uusia korjauksia ja viilauksia</li>
+<li>Ensimmäinen ”<a href="https://wiki.ubuntu.com/Touch">Ubuntu Touch</a>” -julkaisu puhelimille varustettuna Unity 8:lla</li>
+<li>Tuorein Linux-ydin (3.11), tuoreimmat ohjelmistot kuten LibreOffice 4.1</li>
+<li>Kubuntu-sisarversiossa KDE SC 4.11, joka sisältää muun muassa uudistuneet sosiaaliset sovellukset</li>
+<li>Huom. Mythbuntu keskittyy vain LTS-julkaisuihin ja tarjoaa MythTV-päivitykset PPA:n kautta</li>
+</ul>
+-->
+
+<div id="valinnat">
+	<table cellspacing="0" cellpadding="0" width="100%">
+		<tr>
+			<td class="otsikot"><strong>Ubuntu </strong></td>
+			<td class="otsikot"><strong> Kubuntu </strong></td>
+			<td class="otsikot"><strong> Xubuntu </strong></td>
+		</tr>
+		<tr>
+			<td align="left" valign="top">
+					<p> <strong>"desktop" DVD</strong><br>
+							<a href="http://fi.releases.ubuntu.com/14.04.1/ubuntu-14.04.1-desktop-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://fi.releases.ubuntu.com/14.04.1/ubuntu-14.04.1-desktop-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T)<br>
+							<br>
+							<strong>"server" DVD</strong><br>
+							<a href="http://fi.releases.ubuntu.com/14.04.1/ubuntu-14.04.1-server-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://fi.releases.ubuntu.com/14.04.1/ubuntu-14.04.1-server-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T) </p></td>
+			<td align="left" valign="top"><p> <strong>"desktop" DVD</strong><br>
+							<a href="http://cdimage.ubuntu.com/kubuntu/releases/14.04.1/release/kubuntu-14.04.1-desktop-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://cdimage.ubuntu.com/kubuntu/releases/14.04.1/release/kubuntu-14.04.1-desktop-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T)<br>
+							<br>
+							</p></td>
+			<td align="left" valign="top"><p> <strong>"desktop" DVD</strong><br>
+							<a href="http://cdimage.ubuntu.com/xubuntu/releases/14.04.1/release/xubuntu-14.04.1-desktop-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://cdimage.ubuntu.com/xubuntu/releases/14.04.1/release/xubuntu-14.04.1-desktop-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T)<br>
+							<br>
+							</p></td>
+		</tr>
+		<tr>
+			<td class="otsikot"><strong> Mythbuntu </strong></td>
+			<td class="otsikot"><strong> Edubuntu </strong></td>
+			<td class="otsikot"><strong> Ubuntu Studio </strong></td>
+		</tr>
+		<tr>
+			<td align="left" valign="top">
+					<p> <strong>"desktop" DVD</strong><br>
+							<a href="http://cdimage.ubuntu.com/mythbuntu/releases/14.04.1/release/mythbuntu-14.04.1-desktop-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://cdimage.ubuntu.com/mythbuntu/releases/14.04.1/release/mythbuntu-14.04.1-desktop-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T) </p></td>
+			<td align="left" valign="top"><p> <strong>"server" DVD</strong><br>
+							<a href="http://cdimage.ubuntu.com/edubuntu/releases/14.04.1/release/edubuntu-14.04.1-dvd-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://cdimage.ubuntu.com/edubuntu/releases/14.04.1/release/edubuntu-14.04.1-dvd-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T)<br>
+							</td>
+	           	<td align="left" valign="top"><p> <strong>"desktop" DVD</strong><br>
+							<a href="http://cdimage.ubuntu.com/ubuntustudio/releases/14.04.1/release/ubuntustudio-14.04.1-dvd-i386.iso">PC</a> (Intel/AMD x86)<br>
+							<a href="http://cdimage.ubuntu.com/ubuntustudio/releases/14.04.1/release/ubuntustudio-14.04.1-dvd-amd64.iso">64-bit PC</a> (AMD64/IntelEM64T) </p></td>
+		</tr>
+	</table>
+	</div>
+<div style="width:500px; text-align: center; margin: 0 auto;">
+  
+  		<p><br>
+  			Julkaisumuistiot: <a href="https://wiki.ubuntu.com/TrustyTahr/ReleaseNotes">Ubuntu 14.04 LTS</a>, <a href="https://wiki.ubuntu.com/UtopicUnicorn/ReleaseNotes">Ubuntu 14.10</a>.
+  			</p>
+
+</div>
+<div style="display: none;" id="md5info"><h3>MD5-summa</h3><br>
+  <span id="md5summa"> </span></div>
+</div>
+<div style="clear: left;"></div>
+
+ <p><a name="epaviralliset" id="epaviralliset"></a></p>
+ <h2>UBUNTU TOUCH JA MUUT EPÄVIRALLISET JULKAISUT</h2>
+
+<p>Ubuntu Touch on kehitteillä oleva Ubuntun laitesovitus ja käyttöliittymä mobiililaitteille. Se on saatavilla testiversiona kehittäjille ja kokeilijoille.</p>
+
+<ul>
+<li><a href="https://wiki.ubuntu.com/Touch/Install">Samsung Galaxy Nexus, LG Nexus 4, Asus Nexus 7 (2013), Samsung Nexus 10</a> - Canonicalin referenssilaitteet</a></li>
+<li><a href="https://wiki.ubuntu.com/Touch/Devices">Kaikki yhteisön työn alla olevat laitesovitukset</a> - mm. Samsung Galaxy Note, Note 10.1, Note II, S II, Tab, HTC One X, Asus Transformer, Sony Xperia S/T/Neo V</li>
+<li><a href="http://developer.ubuntu.com/">Ubuntu Developer</a> - ala kehittää sovelluksia Ubuntu-laitteille
+</ul>
+
+<p>Ubuntu 14.04 -siirrokset muille tietokonetyypeille:</p>
+<ul>
+<li><a href="http://cdimage.ubuntu.com/releases/14.04/release/ubuntu-14.04-server-powerpc.iso">PowerPC / IBM-PPC (POwER5) (esim. iBook)</a></li>
+<li><a href="http://cdimage.ubuntu.com/releases/14.04/release/ubuntu-14.04-server-ppc64el.iso">PowerPC64
+<li><a href="http://cdimage.ubuntu.com/ubuntu-core/releases/14.04/release/ubuntu-core-14.04-core-arm64.tar.gz">arm64</a></li>
+<li><a href="http://cdimage.ubuntu.com/ubuntu-core/releases/14.04/release/ubuntu-core-14.04-core-armhf.tar.gz">armhf</a></li>
+</ul>
+<p>Tätä harvinaisemmille suoritinarkkitehtuureille löytyy toimiva Linux-jakelu varmimmin <a href="http://www.debian.org/">Debian-projektilta</a>. Debian tukee myös virallisesti muun muassa PowerPC-suorittimella varustettuja laitteita, toisin kuin Ubuntu.</p>
+<!-- <p><a href="http://mirror.magicalfodlOptions.se/ubuntu-nordic/ubuntu-8.04-nordic-remix-desktop-i386.iso">Ubuntu 8.04 Nordic Remix Edition</a> [<a href="http://home.danielnylander.se/ubuntu/">www</a>] sisältää suurimman osan suomen ja muiden pohjoismaisten kielten tuesta suoraan CD-levyllä. <em>Mitään muita eroja ei ole</em>. Tätä ei tarvita, jos kohteena olevalla tietokoneella on käytettävissä  Internet-yhteys, sillä myös viralliset Ubuntu-CD:t lataavat suomen kielituen automaattisesti jos Ubuntu päätetään asentaa. Nordic Editionin on tehnyt tukholmalainen Daniel Nylander. </p>  -->
+<br>
+<br>
+</div>
+<div id="footer">
+<small><a href="http://wiki.ubuntu-fi.org/WWW">Sivuja</a> ylläpitää Ubuntu Suomen yhteisö (<a href="https://launchpad.net/ubuntu-fi-www">palaute</a>). Suomen <a href="http://loco.ubuntu.com/">paikallistiimin</a> yhteyshenkilö tmt at ubuntu.com. Palvelimen tarjoaa: <a class="http" href="http://www.canonical.com/">Canonical Ltd</a>. Ubuntu Suomi -logo: tavaramerkki ® Canonical</small></div>
+
+
+<div id="pagebottom"></div>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"> </script>
+<script type="text/javascript">
+_uacct = "UA-2435457-3";
+urchinTracker();
+</script>
+</body></html>
